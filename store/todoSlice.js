@@ -10,10 +10,12 @@ const todoSlice = createSlice({
   initialState,
   reducers: {
     addTodo: (state, action) => {
+      // action.payload should be an object: { text, priority }
       state.todos.push({
         id: Date.now(),
-        text: action.payload,
+        text: action.payload.text,
         completed: false, // false means active by default
+        priority: action.payload.priority || 'Medium',
       });
     },
     toggleTodo: (state, action) => {
@@ -26,13 +28,13 @@ const todoSlice = createSlice({
       state.todos = state.todos.filter((todo) => todo.id !== action.payload);
     },
     updateTodo: (state, action) => {
-      const { id, text } = action.payload;
+      const { id, text, priority } = action.payload;
       const todo = state.todos.find((todo) => todo.id === id);
       if (todo) {
-        todo.text = text;
+        if (text) todo.text = text;
+        if (priority) todo.priority = priority;
       }
     },
-    // New action to explicitly set the todo status
     setTodoStatus: (state, action) => {
       const { id, completed } = action.payload;
       const todo = state.todos.find((todo) => todo.id === id);
@@ -40,8 +42,11 @@ const todoSlice = createSlice({
         todo.completed = completed;
       }
     },
+    clearCompleted: (state) => {
+      state.todos = state.todos.filter((todo) => !todo.completed);
+    },
   },
 });
 
-export const { addTodo, toggleTodo, deleteTodo, updateTodo, setTodoStatus } = todoSlice.actions;
+export const { addTodo, toggleTodo, deleteTodo, updateTodo, setTodoStatus, clearCompleted } = todoSlice.actions;
 export default todoSlice.reducer;
