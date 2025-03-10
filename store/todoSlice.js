@@ -13,7 +13,7 @@ const todoSlice = createSlice({
       state.todos.push({
         id: Date.now(),
         text: action.payload,
-        completed: false,
+        completed: false, // false means active by default
       });
     },
     toggleTodo: (state, action) => {
@@ -32,8 +32,16 @@ const todoSlice = createSlice({
         todo.text = text;
       }
     },
+    // New action to explicitly set the todo status
+    setTodoStatus: (state, action) => {
+      const { id, completed } = action.payload;
+      const todo = state.todos.find((todo) => todo.id === id);
+      if (todo) {
+        todo.completed = completed;
+      }
+    },
   },
 });
 
-export const { addTodo, toggleTodo, deleteTodo, updateTodo } = todoSlice.actions;
+export const { addTodo, toggleTodo, deleteTodo, updateTodo, setTodoStatus } = todoSlice.actions;
 export default todoSlice.reducer;

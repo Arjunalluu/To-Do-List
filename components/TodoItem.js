@@ -1,16 +1,14 @@
 // components/TodoItem.js
+'use client';
+
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { toggleTodo, deleteTodo, updateTodo } from '../store/todoSlice';
+import { deleteTodo, updateTodo, setTodoStatus } from '../store/todoSlice';
 
 export default function TodoItem({ todo }) {
   const dispatch = useDispatch();
   const [isEditing, setIsEditing] = useState(false);
   const [newText, setNewText] = useState(todo.text);
-
-  const handleToggle = () => {
-    dispatch(toggleTodo(todo.id));
-  };
 
   const handleDelete = () => {
     dispatch(deleteTodo(todo.id));
@@ -20,6 +18,15 @@ export default function TodoItem({ todo }) {
     if (newText.trim() === '') return;
     dispatch(updateTodo({ id: todo.id, text: newText }));
     setIsEditing(false);
+  };
+
+  // Handlers to set the task status explicitly
+  const markActive = () => {
+    dispatch(setTodoStatus({ id: todo.id, completed: false }));
+  };
+
+  const markCompleted = () => {
+    dispatch(setTodoStatus({ id: todo.id, completed: true }));
   };
 
   return (
@@ -36,12 +43,27 @@ export default function TodoItem({ todo }) {
         </>
       ) : (
         <>
-          <span 
-            onClick={handleToggle} 
-            style={{ textDecoration: todo.completed ? 'line-through' : 'none' }}
-          >
+          <span style={{ textDecoration: todo.completed ? 'line-through' : 'none' }}>
             {todo.text}
           </span>
+          <div className="status-checkboxes">
+            <label>
+              <input
+                type="checkbox"
+                checked={!todo.completed}
+                onChange={markActive}
+              />{' '}
+              Active
+            </label>
+            <label>
+              <input
+                type="checkbox"
+                checked={todo.completed}
+                onChange={markCompleted}
+              />{' '}
+              Completed
+            </label>
+          </div>
           <div className="btn-group">
             <button onClick={() => setIsEditing(true)}>Edit</button>
             <button onClick={handleDelete}>Delete</button>

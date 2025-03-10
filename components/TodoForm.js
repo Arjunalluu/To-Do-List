@@ -1,4 +1,6 @@
 // components/TodoForm.js
+'use client';
+
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { addTodo } from '../store/todoSlice';
